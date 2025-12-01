@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def get_llm(model_choice):
+def get_llm(model_choice, mcp_client=None, enable_mcp=True):
     # Look up the configuration (cloud or local Ollama)
     config = resolve_model_config(model_choice)
 
@@ -34,13 +34,21 @@ def get_llm(model_choice):
     # Create the LLM instance using the gathered parameters
     llm_instance = llm_class(**all_params)
 
+    # Bind MCP tools if enabled and available
+    if enable_mcp and mcp_client and mcp_client.enabled:
+        try:
+            from mcp_bridge import bind_tools_to_llm
+            llm_instance = bind_tools_to_llm(llm_instance, mcp_client, model_choice)
+        except Exception as e:
+            logging.warning(f"Failed to bind MCP tools: {e}. Continuing without tools.")
+
     return llm_instance
 
 
-def refine_query(llm, user_input):
+def refine_query(llm, user_input, use_tools=False):
     system_prompt = """
-    You are a Cybercrime Threat Intelligence Expert. Your task is to refine the provided user query that needs to be sent to darkweb search engines. 
-    
+    You are a Cybercrime Threat Intelligence Expert. Your task is to refine the provided user query that needs to be sent to darkweb search engines.
+
     Rules:
     1. Analyze the user query and think about how it can be improved to use as search engine query
     2. Refine the user query by adding or removing words so that it returns the best result from dark web search engines
@@ -52,16 +60,27 @@ def refine_query(llm, user_input):
     prompt_template = ChatPromptTemplate(
         [("system", system_prompt), ("user", "{query}")]
     )
-    chain = prompt_template | llm | StrOutputParser()
+
+    # Use tool-enabled chain if LLM has tools and use_tools=True
+    if use_tools and hasattr(llm, '_mcp_enabled') and llm._mcp_enabled:
+        try:
+            from mcp_bridge import create_tool_enabled_chain
+            chain = create_tool_enabled_chain(llm, prompt_template, streaming=False)
+        except Exception as e:
+            logging.warning(f"Failed to create tool-enabled chain: {e}. Using standard chain.")
+            chain = prompt_template | llm | StrOutputParser()
+    else:
+        chain = prompt_template | llm | StrOutputParser()
+
     return chain.invoke({"query": user_input})
 
 
-def filter_results(llm, query, results):
+def filter_results(llm, query, results, use_tools=False):
     if not results:
         return []
 
     system_prompt = """
-    You are a Cybercrime Threat Intelligence Expert. You are given a dark web search query and a list of search results in the form of index, link and title. 
+    You are a Cybercrime Threat Intelligence Expert. You are given a dark web search query and a list of search results in the form of index, link and title.
     Your task is select the Top 20 relevant results that best match the search query for user to investigate more.
     Rule:
     1. Output ONLY atmost top 20 indices (comma-separated list) no more than that that best match the input query
@@ -75,7 +94,18 @@ def filter_results(llm, query, results):
     prompt_template = ChatPromptTemplate(
         [("system", system_prompt), ("user", "{results}")]
     )
-    chain = prompt_template | llm | StrOutputParser()
+
+    # Use tool-enabled chain if LLM has tools and use_tools=True
+    if use_tools and hasattr(llm, '_mcp_enabled') and llm._mcp_enabled:
+        try:
+            from mcp_bridge import create_tool_enabled_chain
+            chain = create_tool_enabled_chain(llm, prompt_template, streaming=False)
+        except Exception as e:
+            logging.warning(f"Failed to create tool-enabled chain: {e}. Using standard chain.")
+            chain = prompt_template | llm | StrOutputParser()
+    else:
+        chain = prompt_template | llm | StrOutputParser()
+
     try:
         result_indices = chain.invoke({"query": query, "results": final_str})
     except openai.RateLimitError as e:
@@ -153,7 +183,7 @@ def _generate_final_string(results, truncate=False):
     return "\n".join(s for s in final_str)
 
 
-def generate_summary(llm, query, content):
+def generate_summary(llm, query, content, use_tools=True):
     system_prompt = """
     You are an Cybercrime Threat Intelligence Expert tasked with generating context-based technical investigative insights from dark web osint search engine results.
 
@@ -183,5 +213,16 @@ def generate_summary(llm, query, content):
     prompt_template = ChatPromptTemplate(
         [("system", system_prompt), ("user", "{content}")]
     )
-    chain = prompt_template | llm | StrOutputParser()
+
+    # Use tool-enabled chain if LLM has tools and use_tools=True
+    if use_tools and hasattr(llm, '_mcp_enabled') and llm._mcp_enabled:
+        try:
+            from mcp_bridge import create_tool_enabled_chain
+            chain = create_tool_enabled_chain(llm, prompt_template, streaming=True)
+        except Exception as e:
+            logging.warning(f"Failed to create tool-enabled chain: {e}. Using standard chain.")
+            chain = prompt_template | llm | StrOutputParser()
+    else:
+        chain = prompt_template | llm | StrOutputParser()
+
     return chain.invoke({"query": query, "content": content})

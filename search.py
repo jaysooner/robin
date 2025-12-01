@@ -19,9 +19,10 @@ USER_AGENTS = [
 ]
 
 SEARCH_ENGINE_ENDPOINTS = [
+    # Primary Search Engines
     "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q={query}", # Ahmia
     "http://3bbad7fauom4d6sgppalyqddsqbf5u5p56b5k5uk2zxsy3d6ey2jobad.onion/search?q={query}", # OnionLand
-    "http://darkhuntyla64h75a3re5e2l3367lqn7ltmdzpgmr6b4nbz3q2iaxrid.onion/search?q={query}", # DarkRunt
+    "http://darkhuntyla64h75a3re5e2l3367lqn7ltmdzpgmr6b4nbz3q2iaxrid.onion/search?q={query}", # DarkHunt
     "http://iy3544gmoeclh5de6gez2256v6pjh4omhpqdh2wpeeppjtvqmjhkfwad.onion/torgle/?query={query}", # Torgle
     "http://amnesia7u5odx5xbwtpnqk3edybgud5bmiagu75bnqx2crntw5kry7ad.onion/search?query={query}", # Amnesia
     "http://kaizerwfvp5gxu6cppibp7jhcqptavq3iqef66wbxenh6a2fklibdvid.onion/search?q={query}", # Kaizer
@@ -30,10 +31,18 @@ SEARCH_ENGINE_ENDPOINTS = [
     "http://tornetupfu7gcgidt33ftnungxzyfq2pygui5qdoyss34xbgx2qruzid.onion/search?q={query}", # TorNet
     "http://torlbmqwtudkorme6prgfpmsnile7ug2zm4u3ejpcncxuhpu4k2j4kyd.onion/index.php?a=search&q={query}", # Torland
     "http://findtorroveq5wdnipkaojfpqulxnkhblymc7aramjzajcvpptd4rjqd.onion/search?q={query}", # Find Tor
-    "http://2fd6cemt4gmccflhm6imvdfvli3nf7zn6rfrwpsy7uhxrgbypvwf5fad.onion/search?query={query}", # Excavator    
+    "http://2fd6cemt4gmccflhm6imvdfvli3nf7zn6rfrwpsy7uhxrgbypvwf5fad.onion/search?query={query}", # Excavator
     "http://oniwayzz74cv2puhsgx4dpjwieww4wdphsydqvf5q7eyz4myjvyw26ad.onion/search.php?s={query}", # Onionway
     "http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/search?q={query}", # Tor66
     "http://3fzh7yuupdfyjhwt3ugzqqof6ulbcl27ecev33knxe3u7goi3vfn2qqd.onion/oss/index.php?search={query}", # OSS (Onion Search Server)
+
+    # Additional Search Engines for Better Coverage
+    "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q={query}", # Haystak
+    "http://darksearchtkzcdjd6bvzylnjc5hshvzd3s26qxuqz5h2wfzp4buz5ad.onion/?q={query}", # DarkSearch
+    "http://phobos2nhokhtdavdsmqwdx6prdpj3kvxkypwobpawuzwzwkk4bnxhad.onion/search?q={query}", # Phobos
+    "http://sentor7gqrsbymixcvhlh7f46xptjmkjuq4cjllh4zr5sbcdkxhdid.onion/search?q={query}", # Sentor
+    "http://darkheart2kbqqyv7e4vndyy4v7htl36wbvxswdpnm5nhiwrz7s2yid.onion/search?q={query}", # DarkHeart
+    "http://onionsearchengine.com/search.php?q={query}", # Onion Search Engine (clearnet gateway - fallback)
 ]
 
 def get_tor_proxies():

@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
 from typing import Callable, Optional, List
 from langchain_anthropic import ChatAnthropic
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI  # Requires Python 3.10+
 from langchain_core.callbacks.base import BaseCallbackHandler
 from config import OLLAMA_BASE_URL, OPENROUTER_BASE_URL, OPENROUTER_API_KEY, GOOGLE_API_KEY
 
@@ -69,18 +69,19 @@ _llm_config_map = {
         'class': ChatAnthropic,
         'constructor_params': {'model': 'claude-sonnet-4-0'}
     },
-    'gemini-2.5-flash': {
-        'class': ChatGoogleGenerativeAI,
-        'constructor_params': {'model': 'gemini-2.5-flash', 'google_api_key': GOOGLE_API_KEY }
-    },
-    'gemini-2.5-flash-lite': {
-        'class': ChatGoogleGenerativeAI,
-        'constructor_params': {'model': 'gemini-2.5-flash-lite', 'google_api_key': GOOGLE_API_KEY}
-    },
-    'gemini-2.5-pro': {
-        'class': ChatGoogleGenerativeAI,
-        'constructor_params': {'model': 'gemini-2.5-pro', 'google_api_key': GOOGLE_API_KEY}
-    },
+    # Gemini models require Python 3.10+ (langchain_google_genai)
+    # 'gemini-2.5-flash': {
+    #     'class': ChatGoogleGenerativeAI,
+    #     'constructor_params': {'model': 'gemini-2.5-flash', 'google_api_key': GOOGLE_API_KEY }
+    # },
+    # 'gemini-2.5-flash-lite': {
+    #     'class': ChatGoogleGenerativeAI,
+    #     'constructor_params': {'model': 'gemini-2.5-flash-lite', 'google_api_key': GOOGLE_API_KEY}
+    # },
+    # 'gemini-2.5-pro': {
+    #     'class': ChatGoogleGenerativeAI,
+    #     'constructor_params': {'model': 'gemini-2.5-pro', 'google_api_key': GOOGLE_API_KEY}
+    # },
     'gpt-5.1-openrouter': {
         'class': ChatOpenAI,
         'constructor_params': {
@@ -113,6 +114,81 @@ _llm_config_map = {
             'api_key': OPENROUTER_API_KEY  # Use OpenRouter API key
         }
     },
+    'grok-4.1-fast-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'x-ai/grok-4.1-fast:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    # Additional OpenRouter Models (Free Tier)
+    'deepseek-r1-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'deepseek/deepseek-r1:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'llama-3.1-8b-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'meta-llama/llama-3.1-8b-instruct:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'llama-3.3-70b-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'meta-llama/llama-3.3-70b-instruct:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'mistral-7b-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'mistralai/mistral-7b-instruct:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'qwen-2.5-7b-free': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'qwen/qwen-2.5-7b-instruct:free',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    # OpenRouter Premium Models
+    'deepseek-r1': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'deepseek/deepseek-r1',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'claude-opus-4': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'anthropic/claude-opus-4',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    'grok-2': {
+        'class': ChatOpenAI,
+        'constructor_params': {
+            'model_name': 'x-ai/grok-2',
+            'base_url': OPENROUTER_BASE_URL,
+            'api_key': OPENROUTER_API_KEY
+        }
+    },
+    # Local Ollama Models (commented out - uncomment after installing models)
     # 'llama3.2': {
     #     'class': ChatOllama,
     #     'constructor_params': {'model': 'llama3.2:latest', 'base_url': OLLAMA_BASE_URL}
@@ -121,13 +197,17 @@ _llm_config_map = {
     #     'class': ChatOllama,
     #     'constructor_params': {'model': 'llama3.1:latest', 'base_url': OLLAMA_BASE_URL}
     # },
-    # 'gemma3': {
+    # 'gemma2': {
     #     'class': ChatOllama,
-    #     'constructor_params': {'model': 'gemma3:latest', 'base_url': OLLAMA_BASE_URL}
+    #     'constructor_params': {'model': 'gemma2:latest', 'base_url': OLLAMA_BASE_URL}
     # },
-    # 'deepseek-r1': {
+    # 'deepseek-r1-local': {
     #     'class': ChatOllama,
     #     'constructor_params': {'model': 'deepseek-r1:latest', 'base_url': OLLAMA_BASE_URL}
+    # },
+    # 'mistral': {
+    #     'class': ChatOllama,
+    #     'constructor_params': {'model': 'mistral:latest', 'base_url': OLLAMA_BASE_URL}
     # },
     
     # Add more models here easily:
@@ -214,3 +294,30 @@ def resolve_model_config(model_choice: str):
             }
 
     return None
+
+
+def supports_tool_calling(llm_instance) -> bool:
+    """
+    Detect if an LLM instance supports tool/function calling.
+
+    Args:
+        llm_instance: LangChain LLM instance
+
+    Returns:
+        True if the LLM supports tool calling, False otherwise
+    """
+    # Claude and OpenAI have native tool support
+    if isinstance(llm_instance, (ChatAnthropic, ChatOpenAI)):
+        return True
+
+    # Ollama: Only certain models support tools
+    if isinstance(llm_instance, ChatOllama):
+        tool_capable_models = ['llama3.1', 'llama3.2', 'mistral', 'mixtral', 'qwen2.5']
+        model_name = llm_instance.model.lower()
+        return any(m in model_name for m in tool_capable_models)
+
+    # Check for Google Gemini (if available)
+    if 'ChatGoogleGenerativeAI' in str(type(llm_instance)):
+        return True
+
+    return False
